@@ -1,0 +1,13 @@
+# НАСТРОЙКИ СЕРВЕРА
+PORT=3000
+NODE_ENV=development
+
+# БАЗА ДАННЫХ (SQLite - по умолчанию)
+DB_TYPE=sqlite
+DB_PATH=./dandy_pizza.db
+
+# JWT СЕКРЕТ
+JWT_SECRET=dandy_pizza_secret_key_2025
+
+# CORS
+CORS_ORIGIN=http://localhost:3000

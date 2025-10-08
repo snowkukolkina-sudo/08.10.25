@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DANDY - Оформление заказа</title>
+    <link rel="stylesheet" href="assets/custom.css">
+    <link rel="stylesheet" href="nav-menu/nav-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dandy-green: #0b5c3b;
+            --dandy-yellow: #ffd24d;
+            --dandy-pink: #ff69b4;
+            --dandy-bg: #0f6b49;
+            --dandy-card: #ffffff;
+            --dandy-muted: #eaf3ee;
+            --text-on-green: #F3EADB;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--dandy-green) 0%, var(--dandy-bg) 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .brandline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 18px;
+        }
+
+        .brand-rabbit {
+            height: 64px;
+            margin-right: 15px;
+        }
+
+        .brand-logo {
+            height: 58px;
+        }
+
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .checkout-form {
+            background: var(--dandy-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-summary {
+            background: var(--dandy-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dandy-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--dandy-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dandy-green);
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--dandy-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 210, 77, 0.1);
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-label {
+            display: block;
+            padding: 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .radio-label:hover {
+            border-color: var(--dandy-yellow);
+            transform: translateY(-2px);
+        }
+
+        .radio-input:checked + .radio-label {
+            border-color: var(--dandy-green);
+            background: var(--dandy-muted);
+            color: var(--dandy-green);
+        }
+
+        .radio-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .payment-option {
+            position: relative;
+        }
+
+        .payment-label {
+            display: block;
+            padding: 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .payment-label:hover {
+            border-color: var(--dandy-yellow);
+            transform: translateY(-2px);
+        }
+
+        .payment-input:checked + .payment-label {
+            border-color: var(--dandy-green);
+            background: var(--dandy-muted);
+            color: var(--dandy-green);
+        }
+
+        .payment-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background: var(--dandy-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .item-details h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--dandy-green);
+        }
+
+        .order-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--dandy-green);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-final {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dandy-green);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--dandy-green) 0%, var(--dandy-bg) 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(11, 92, 59, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dandy-green);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--dandy-bg);
+            transform: translateX(-5px);
+        }
+
+        .delivery-info {
+            background: var(--dandy-muted);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .delivery-info h4 {
+            color: var(--dandy-green);
+            margin-bottom: 10px;
+        }
+
+        .delivery-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brandline">
+                <img src="assets/brand/logo.png" alt="DANDY" class="brand-rabbit">
+                <img src="assets/brand/logo.png" alt="DANDY" class="brand-logo">
+            </div>
+        </div>
+
+        <a href="index.html" class="back-btn">
+            ← Вернуться к меню
+        </a>
+
+        <div class="checkout-container">
+            <div class="checkout-form">
+                <form id="checkoutForm">
+                    <!-- Способ получения -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">🚚</span>
+                            Способ получения
+                        </h3>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="delivery" name="deliveryType" value="delivery" class="radio-input" checked>
+                                <label for="delivery" class="radio-label">
+                                    <span class="radio-icon">🚚</span>
+                                    <strong>Доставка</strong>
+                                    <small>30-45 мин</small>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="pickup" name="deliveryType" value="pickup" class="radio-input">
+                                <label for="pickup" class="radio-label">
+                                    <span class="radio-icon">🏪</span>
+                                    <strong>Самовывоз</strong>
+                                    <small>15-20 мин</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Данные для доставки -->
+                    <div id="deliveryData" class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">📍</span>
+                            Данные для доставки
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label">Адрес доставки</label>
+                            <input type="text" class="form-input" id="address" placeholder="Укажите адрес доставки" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Подъезд, этаж, квартира</label>
+                            <input type="text" class="form-input" id="apartment" placeholder="Подъезд, этаж, квартира">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Комментарий к адресу</label>
+                            <textarea class="form-input" id="addressComment" rows="3" placeholder="Дополнительная информация для курьера"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Контактные данные -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">📞</span>
+                            Контактные данные
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label">Имя</label>
+                            <input type="text" class="form-input" id="customerName" placeholder="Ваше имя" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Телефон</label>
+                            <input type="tel" class="form-input" id="customerPhone" placeholder="+7 (999) 123-45-67" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email (для чека)</label>
+                            <input type="email" class="form-input" id="customerEmail" placeholder="your@email.com">
+                        </div>
+                    </div>
+
+                    <!-- Способ оплаты -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">💳</span>
+                            Способ оплаты
+                        </h3>
+                        <div class="payment-methods">
+                            <div class="payment-option">
+                                <input type="radio" id="card" name="paymentMethod" value="card" class="payment-input" checked>
+                                <label for="card" class="payment-label">
+                                    <span class="payment-icon">💳</span>
+                                    <strong>Карта</strong>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="cash" name="paymentMethod" value="cash" class="payment-input">
+                                <label for="cash" class="payment-label">
+                                    <span class="payment-icon">💵</span>
+                                    <strong>Наличные</strong>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="sbp" name="paymentMethod" value="sbp" class="payment-input">
+                                <label for="sbp" class="payment-label">
+                                    <span class="payment-icon">📱</span>
+                                    <strong>СБП</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Комментарий к заказу -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">💬</span>
+                            Комментарий к заказу
+                        </h3>
+                        <div class="form-group">
+                            <textarea class="form-input" id="orderComment" rows="3" placeholder="Особые пожелания к заказу"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitOrder">
+                        Оформить заказ
+                    </button>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3 class="section-title">
+                    <span class="section-icon">🛒</span>
+                    Ваш заказ
+                </h3>
+                
+                <div id="orderItems">
+                    <!-- Товары будут добавлены динамически -->
+                </div>
+
+                <div class="order-total">
+                    <div class="total-row">
+                        <span>Сумма заказа:</span>
+                        <span id="orderSubtotal">0 ₽</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Доставка:</span>
+                        <span id="deliveryCost">0 ₽</span>
+                    </div>
+                    <div class="total-row total-final">
+                        <span>Итого:</span>
+                        <span id="orderTotal">0 ₽</span>
+                    </div>
+                </div>
+
+                <div class="delivery-info">
+                    <h4>Информация о доставке</h4>
+                    <p>Время доставки: 30-45 минут</p>
+                    <p>Минимальная сумма заказа: 500 ₽</p>
+                    <p>Бесплатная доставка от 1500 ₽</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Получаем данные корзины из localStorage
+        function loadCartData() {
+            const cart = JSON.parse(localStorage.getItem('dandy_cart') || '[]');
+            console.log('Cart from localStorage:', cart);
+            const orderItemsContainer = document.getElementById('orderItems');
+            let subtotal = 0;
+
+            if (cart.length === 0) {
+                orderItemsContainer.innerHTML = '<p>Корзина пуста</p>';
+                updateTotals(0);
+                return;
+            }
+
+            orderItemsContainer.innerHTML = '';
+            
+            cart.forEach(item => {
+                const price = parseFloat(item.price) || 0;
+                const quantity = parseInt(item.qty) || 0;
+                const itemTotal = price * quantity;
+                subtotal += itemTotal;
+                
+                console.log(`Item: ${item.name}, Price: ${price}, Quantity: ${quantity}, Total: ${itemTotal}`);
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-image">🍕</div>
+                        <div class="item-details">
+                            <h4>${item.name}</h4>
+                            <p>Количество: ${item.quantity}</p>
+                        </div>
+                    </div>
+                    <div class="item-price">${itemTotal} ₽</div>
+                `;
+                orderItemsContainer.appendChild(itemElement);
+            });
+
+            console.log(`loadCartData: final subtotal=${subtotal}`);
+            updateTotals(subtotal);
+        }
+
+        function updateTotals(subtotal) {
+            // Обработка NaN значений
+            const safeSubtotal = isNaN(subtotal) ? 0 : subtotal;
+            
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
+            let deliveryCost = 0;
+            
+            if (deliveryType === 'delivery') {
+                deliveryCost = safeSubtotal >= 1500 ? 0 : 200;
+            }
+
+            const total = safeSubtotal + deliveryCost;
+
+            console.log(`updateTotals: subtotal=${subtotal}, safeSubtotal=${safeSubtotal}, deliveryCost=${deliveryCost}, total=${total}`);
+
+            document.getElementById('orderSubtotal').textContent = safeSubtotal + ' ₽';
+            document.getElementById('deliveryCost').textContent = deliveryCost + ' ₽';
+            document.getElementById('orderTotal').textContent = total + ' ₽';
+        }
+
+        // Функция для извлечения числового значения из текста с символом ₽
+        function extractNumberFromText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            console.log(`Extracting from ${elementId}: "${text}"`);
+            const number = parseFloat(text.replace(/[^\d.]/g, ''));
+            console.log(`Extracted number: ${number}`);
+            return isNaN(number) ? 0 : number;
+        }
+
+        // Обработка изменения способа доставки
+        document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const deliveryData = document.getElementById('deliveryData');
+                if (this.value === 'delivery') {
+                    deliveryData.style.display = 'block';
+                } else {
+                    deliveryData.style.display = 'none';
+                }
+                updateTotals(extractNumberFromText('orderSubtotal'));
+            });
+        });
+
+        // Обработка отправки формы
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const paymentMethod = formData.get('paymentMethod') || 'card';
+            
+            // Валидация основных данных
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            
+            if (!customerName || !customerPhone) {
+                alert('Пожалуйста, заполните имя и телефон');
+                return;
+            }
+            
+            const cart = JSON.parse(localStorage.getItem('dandy_cart') || '[]');
+            if (!cart || cart.length === 0) {
+                alert('Корзина пуста');
+                return;
+            }
+            
+            const subtotal = extractNumberFromText('orderSubtotal');
+            if (subtotal <= 0) {
+                alert('Сумма заказа должна быть больше 0');
+                return;
+            }
+            
+            // Если выбран способ оплаты картой, показываем модальное окно
+            if (paymentMethod === 'card') {
+                showCardPaymentModal();
+                return;
+            }
+            
+            // Для других способов оплаты сразу обрабатываем заказ
+            await processOrder();
+        });
+        
+        // Функция обработки заказа
+        async function processOrder() {
+            const submitBtn = document.getElementById('submitOrder');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Обрабатываем заказ...';
+
+            try {
+                const formData = new FormData(document.getElementById('checkoutForm'));
+                const orderData = {
+                    items: JSON.parse(localStorage.getItem('dandy_cart') || '[]'),
+                    deliveryType: formData.get('deliveryType') || 'delivery',
+                    paymentMethod: formData.get('paymentMethod') || 'card',
+                    customerName: document.getElementById('customerName').value,
+                    customerPhone: document.getElementById('customerPhone').value,
+                    customerEmail: document.getElementById('customerEmail').value,
+                    address: document.getElementById('address').value,
+                    apartment: document.getElementById('apartment').value,
+                    addressComment: document.getElementById('addressComment').value,
+                    orderComment: document.getElementById('orderComment').value,
+                    subtotal: extractNumberFromText('orderSubtotal'),
+                    deliveryCost: extractNumberFromText('deliveryCost'),
+                    total: extractNumberFromText('orderTotal')
+                };
+
+                console.log('Order data:', orderData);
+
+                // Отправляем заказ на сервер
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Order created:', result);
+                    
+                    // API возвращает { success: true, data: { id, ... } }
+                    const orderId = result.data?.id || result.id || 'unknown';
+                    
+                    // Сохраняем заказ в localStorage для отслеживания
+                    localStorage.setItem('lastOrder', JSON.stringify(result.data || result));
+                    
+                    // Очищаем корзину
+                    localStorage.removeItem('dandy_cart');
+                    
+                    // Перенаправляем на страницу успеха
+                    window.location.href = `order-success.html?orderId=${orderId}`;
+                } else {
+                    throw new Error('Ошибка при создании заказа');
+                }
+            } catch (error) {
+                alert('Произошла ошибка при оформлении заказа. Попробуйте еще раз.');
+                console.error('Order error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Оформить заказ';
+            }
+        }
+
+        // Инициализация
+        loadCartData();
+        
+        // Инициализация масок ввода и функциональности оплаты
+        initPaymentForm();
+        
+        // Функция инициализации формы оплаты
+        function initPaymentForm() {
+            const cardNumberInput = document.getElementById('cardNumber');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const cvvInput = document.getElementById('cvv');
+            const cardholderNameInput = document.getElementById('cardholderName');
+            
+            // Проверяем наличие элементов (они могут не существовать на этой странице)
+            if (!cardNumberInput || !expiryDateInput || !cvvInput || !cardholderNameInput) {
+                console.log('Элементы формы оплаты не найдены, пропускаем инициализацию');
+                return;
+            }
+            
+            // Маска для номера карты
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                e.target.value = value;
+                
+                // Определяем тип карты
+                detectCardType(value.replace(/\s/g, ''));
+            });
+            
+            // Маска для даты истечения
+            expiryDateInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+            
+            // Маска для CVV
+            cvvInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+            
+            // Маска для имени держателя карты
+            cardholderNameInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase();
+            });
+            
+            // Закрытие модального окна по клику вне его
+            document.getElementById('cardPaymentModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCardPaymentModal();
+                }
+            });
+            
+            // Закрытие по Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCardPaymentModal();
+                }
+            });
+        }
+        
+        // Функция определения типа карты
+        function detectCardType(cardNumber) {
+            const cardIcons = document.querySelectorAll('.card-icon');
+            
+            // Убираем активный класс со всех иконок
+            cardIcons.forEach(icon => icon.classList.remove('active'));
+            
+            if (cardNumber.length < 4) return;
+            
+            const firstDigit = cardNumber[0];
+            const firstTwoDigits = cardNumber.substring(0, 2);
+            
+            if (firstDigit === '4') {
+                // Visa
+                document.querySelector('.card-icon.visa').classList.add('active');
+            } else if (firstTwoDigits >= '51' && firstTwoDigits <= '55') {
+                // Mastercard
+                document.querySelector('.card-icon.mastercard').classList.add('active');
+            } else if (firstTwoDigits === '22' || firstTwoDigits === '23' || 
+                      firstTwoDigits === '24' || firstTwoDigits === '25' || 
+                      firstTwoDigits === '26' || firstTwoDigits === '27' || 
+                      firstTwoDigits === '28' || firstTwoDigits === '29') {
+                // МИР
+                document.querySelector('.card-icon.mir').classList.add('active');
+            }
+        }
+
+        // Обработка выбора способа оплаты
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Обновляем отображение в зависимости от выбранного способа оплаты
+                console.log('Выбран способ оплаты:', this.value);
+            });
+        });
+
+        // Функция показа модального окна оплаты картой
+        function showCardPaymentModal() {
+            const modal = document.getElementById('cardPaymentModal');
+            const paymentAmount = document.getElementById('paymentAmount');
+            const total = extractNumberFromText('orderTotal');
+            
+            // Устанавливаем сумму к оплате
+            paymentAmount.textContent = total + ' ₽';
+            
+            modal.style.display = 'flex';
+            
+            // Фокусируемся на поле номера карты
+            setTimeout(() => {
+                document.getElementById('cardNumber').focus();
+            }, 400);
+        }
+
+        // Функция закрытия модального окна
+        function closeCardPaymentModal() {
+            const modal = document.getElementById('cardPaymentModal');
+            modal.style.display = 'none';
+        }
+
+        // Обработка отправки формы оплаты картой
+        const cardPaymentForm = document.getElementById('cardPaymentForm');
+        if (cardPaymentForm) {
+            cardPaymentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+            
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const expiryDate = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById('cvv').value;
+            const cardholderName = document.getElementById('cardholderName').value;
+            
+            // Простая валидация
+            if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+                showPaymentError('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            if (cardNumber.length < 16) {
+                showPaymentError('Номер карты должен содержать 16 цифр');
+                return;
+            }
+            
+            if (cvv.length < 3) {
+                showPaymentError('CVV должен содержать 3 цифры');
+                return;
+            }
+            
+            // Проверка даты истечения
+            const [month, year] = expiryDate.split('/');
+            if (!month || !year || month.length !== 2 || year.length !== 2) {
+                showPaymentError('Неверный формат даты истечения');
+                return;
+            }
+            
+            // Имитация обработки платежа
+            const submitBtn = document.getElementById('processPayment');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'flex';
+            
+            setTimeout(async () => {
+                try {
+                    // Имитация успешной оплаты
+                    showPaymentSuccess();
+                    
+                    setTimeout(async () => {
+                        closeCardPaymentModal();
+                        
+                        // Обрабатываем заказ
+                        await processOrder();
+                        
+                        // Сброс формы
+                        resetPaymentForm();
+                    }, 1500);
+                    
+                } catch (error) {
+                    showPaymentError('Ошибка при обработке заказа');
+                    resetPaymentButton();
+                }
+            }, 2000);
+            });
+        }
+        
+        // Функция показа ошибки
+        function showPaymentError(message) {
+            const submitBtn = document.getElementById('processPayment');
+            const originalText = submitBtn.querySelector('.btn-text').textContent;
+            
+            submitBtn.style.background = '#dc2626';
+            submitBtn.querySelector('.btn-text').textContent = message;
+            
+            setTimeout(() => {
+                submitBtn.style.background = '';
+                submitBtn.querySelector('.btn-text').textContent = originalText;
+            }, 3000);
+        }
+        
+        // Функция показа успеха
+        function showPaymentSuccess() {
+            const submitBtn = document.getElementById('processPayment');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            btnLoading.innerHTML = '<div style="color: #10b981;">✅</div><span>Успешно!</span>';
+            submitBtn.style.background = '#10b981';
+        }
+        
+        // Функция сброса кнопки
+        function resetPaymentButton() {
+            const submitBtn = document.getElementById('processPayment');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            submitBtn.disabled = false;
+            btnText.style.display = 'block';
+            btnLoading.style.display = 'none';
+            submitBtn.style.background = '';
+        }
+        
+        // Функция сброса формы
+        function resetPaymentForm() {
+            document.getElementById('cardPaymentForm').reset();
+            document.querySelectorAll('.card-icon').forEach(icon => icon.classList.remove('active'));
+            resetPaymentButton();
+        }
+    </script>
+
+    <!-- Модальное окно оплаты картой -->
+    <div id="cardPaymentModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-left">
+                    <div class="payment-icon">💳</div>
+                    <div class="header-text">
+                        <h3>Оплата картой</h3>
+                        <p>Безопасная оплата через банк</p>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeCardPaymentModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="payment-amount">
+                <span class="amount-label">К оплате:</span>
+                <span class="amount-value" id="paymentAmount">0 ₽</span>
+            </div>
+            
+            <form id="cardPaymentForm" style="padding: 32px;">
+                <div class="form-group">
+                    <label class="form-label">Номер карты</label>
+                    <div class="input-container">
+                        <input type="text" id="cardNumber" class="form-input card-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <div class="card-icons" id="cardIcons">
+                            <div class="card-icon visa" title="Visa">VISA</div>
+                            <div class="card-icon mastercard" title="Mastercard">MC</div>
+                            <div class="card-icon mir" title="МИР">МИР</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Срок действия</label>
+                        <input type="text" id="expiryDate" class="form-input" placeholder="ММ/ГГ" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CVV</label>
+                        <div class="input-container">
+                            <input type="text" id="cvv" class="form-input" placeholder="123" maxlength="3">
+                            <div class="cvv-info">?</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Имя держателя карты</label>
+                    <input type="text" id="cardholderName" class="form-input" placeholder="IVAN IVANOV">
+                </div>
+                
+                <div class="payment-security">
+                    <div class="security-icons">
+                        <div class="security-icon">🔒</div>
+                        <div class="security-icon">🛡️</div>
+                        <div class="security-icon">✅</div>
+                    </div>
+                    <p>Ваши данные защищены SSL-шифрованием и соответствуют стандартам PCI DSS</p>
+                </div>
+                
+                <button type="submit" id="processPayment" class="submit-btn payment-btn">
+                    <span class="btn-text">Оплатить</span>
+                    <div class="btn-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Обрабатываем...</span>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Стили для модального окна оплаты */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 24px;
+            padding: 0;
+            max-width: 520px;
+            width: 95%;
+            max-height: 95vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: slideInUp 0.4s ease;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--dandy-green), var(--dandy-yellow), var(--dandy-pink));
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 28px 32px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--dandy-green), var(--dandy-bg));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(11, 92, 59, 0.3);
+        }
+
+        .header-text h3 {
+            color: var(--dandy-green);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .header-text p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .close-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--dandy-green);
+            transform: scale(1.05);
+        }
+
+        .payment-amount {
+            padding: 24px 32px;
+            background: linear-gradient(135deg, var(--dandy-muted), rgba(11, 92, 59, 0.05));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .amount-label {
+            color: #666;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .amount-value {
+            color: var(--dandy-green);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 22px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--dandy-green);
+            box-shadow: 
+                0 0 0 3px rgba(11, 92, 59, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .card-input {
+            padding-right: 140px;
+        }
+
+        .card-icons {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-icon {
+            width: 36px;
+            height: 24px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-icon.visa {
+            background: linear-gradient(135deg, #1a1f71, #0066cc);
+            color: white;
+        }
+
+        .card-icon.mastercard {
+            background: linear-gradient(135deg, #eb001b, #f79e1b);
+            color: white;
+        }
+
+        .card-icon.mir {
+            background: linear-gradient(135deg, #00a0e3, #0066cc);
+            color: white;
+        }
+
+        .card-icon.active {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .cvv-info {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            cursor: help;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .payment-security {
+            background: linear-gradient(135deg, rgba(11, 92, 59, 0.05), rgba(255, 210, 77, 0.05));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 24px 0;
+            text-align: center;
+            border: 1px solid rgba(11, 92, 59, 0.1);
+        }
+
+        .security-icons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .security-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-security p {
+            color: var(--dandy-green);
+            font-weight: 500;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .payment-btn {
+            width: 100%;
+            padding: 20px 28px;
+            background: linear-gradient(135deg, var(--dandy-green) 0%, var(--dandy-bg) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(11, 92, 59, 0.3);
+        }
+
+        .payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(11, 92, 59, 0.4);
+        }
+
+        .payment-btn:active {
+            transform: translateY(0);
+        }
+
+        .payment-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 15px;
+                padding: 0;
+                max-width: none;
+                width: calc(100% - 30px);
+                max-height: 98vh;
+            }
+            
+            .modal-header {
+                padding: 24px 28px 20px;
+            }
+            
+            .payment-amount {
+                padding: 20px 28px;
+            }
+            
+            #cardPaymentForm {
+                padding: 28px !important;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header-left {
+                gap: 14px;
+            }
+            
+            .payment-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+            
+            .header-text h3 {
+                font-size: 19px;
+            }
+            
+            .form-input {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+            
+            .payment-btn {
+                padding: 18px 24px;
+                font-size: 17px;
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Подключение платёжного модуля -->
+    <script src="modules/payment-gateway.js"></script>
+    
+    <script>
+        // Инициализация платёжного шлюза
+        let paymentGateway;
+        if (typeof PaymentGateway !== 'undefined') {
+            paymentGateway = new PaymentGateway();
+            paymentGateway.setProvider('sberbank');
+        }
+    </script>
+</body>
+</html>

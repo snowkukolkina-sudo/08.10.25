@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DANDY CRM - Админка</title>
+    <link rel="stylesheet" href="assets/custom.css">
+    <style>
+        :root {
+            --dandy-green: #0b5c3b;
+            --dandy-yellow: #ffd24d;
+            --dandy-pink: #ff69b4;
+            --dandy-bg: #0f6b49;
+            --dandy-card: #ffffff;
+            --dandy-muted: #eaf3ee;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--dandy-green);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--dandy-green);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-new-logo {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .brand-new-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .login-header .brand-new-logo {
+            height: 60px;
+            margin: 0 auto 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--dandy-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-title {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--dandy-yellow), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .phone-info {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Стили для поиска */
+        #adminSearch::placeholder {
+            color: rgba(255,255,255,0.8) !important;
+        }
+        
+        #adminSearch:focus::placeholder {
+            color: rgba(255,255,255,0.6) !important;
+        }
+
+        .tabs-wrap {
+            background: var(--dandy-bg);
+            overflow-x: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            padding: 0.5rem 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+        }
+
+        .tabs-wrap::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tabs-wrap::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs-wrap::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .tabs-wrap::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .tabs-wrap::before,
+        .tabs-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .tabs-wrap::before {
+            left: 0;
+            background: linear-gradient(to right, var(--dandy-bg), transparent);
+        }
+
+        .tabs-wrap::after {
+            right: 0;
+            background: linear-gradient(to left, var(--dandy-bg), transparent);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            min-width: max-content;
+            white-space: nowrap;
+        }
+
+        .tabs li {
+            flex-shrink: 0;
+        }
+
+        .tab {
+            display: block;
+            padding: 0.75rem 1.2rem;
+            border-radius: 25px;
+            background: transparent;
+            color: var(--dandy-pink);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-width: fit-content;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        .tab.active {
+            background: rgba(255,255,255,0.15);
+            color: var(--dandy-pink);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+        }
+
+
+        .main-content {
+            flex: 1;
+            background: var(--dandy-bg);
+            border-radius: 20px 20px 0 0;
+            margin-top: 1rem;
+            padding: 2rem;
+            min-height: calc(100vh - 140px);
+        }
+
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--dandy-muted);
+        }
+
+        .login-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .login-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--dandy-green);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--dandy-yellow);
+        }
+
+        /* Специальные стили для полей в карточках */
+        .card .form-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.4rem;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+
+        /* Стили для полей маркетинга */
+        .marketing-card .form-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.4rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            box-sizing: border-box;
+        }
+
+        /* Контейнеры для полей в карточках */
+        .card input[type="text"],
+        .card input[type="number"] {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.4rem;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+
+        .card input[type="text"]:focus,
+        .card input[type="number"]:focus {
+            outline: none;
+            border-color: var(--dandy-yellow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--dandy-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0a4d35;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dandy-green);
+            border: 2px solid var(--dandy-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dandy-green);
+            color: white;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .test-info {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dandy-green);
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-accepted { background: #e5e7eb; color: #374151; }
+        .status-cooking { background: #fef3c7; color: #92400e; }
+        .status-ready { background: #d1fae5; color: #065f46; }
+        .status-delivering { background: #dbeafe; color: #1e40af; }
+        .status-delivered { background: #dcfce7; color: #166534; }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-danger {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+            color: #92400e;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <form class="login-form" id="loginForm">
+            <div class="login-header">
+                <img class="brand-new-logo" src="assets/brand/logo.png" alt="ДЭНДИ пицца и суши" style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem;">
+            </div>
+            
+            <h1 class="login-title">ВХОД В АДМИНКУ</h1>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Логин</label>
+                    <input type="text" class="form-input" id="login" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Пароль</label>
+                    <input type="password" class="form-input" id="password" placeholder="Admin123456" required>
+                </div>
+            </div>
+            
+            <div class="radio-group">
+                <label class="radio-item">
+                    <input type="radio" name="role" value="кассир">
+                    <span>Кассир</span>
+                </label>
+                <label class="radio-item">
+                    <input type="radio" name="role" value="администратор" checked>
+                    <span>Администратор</span>
+                </label>
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="adminPanel" class="admin-container" style="display: none;">
+        <header class="header">
+            <div class="logo-section">
+                <img class="brand-new-logo" src="assets/brand/logo.png" alt="ДЭНДИ пицца и суши" style="height: 50px; width: auto; object-fit: contain;">
+            </div>
+            
+            <div class="header-actions">
+                <div class="phone-info">
+                    📞 +7 (925) 934-77-28 <span style="opacity: 0.8; font-size: 0.8rem;">техподдержка</span>
+                </div>
+                <div class="search-container" style="margin-right: 1rem;">
+                    <input type="text" id="adminSearch" placeholder="Поиск по товарам, категориям, описанию..." style="padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; outline: none; width: 300px;">
+                </div>
+                <div class="lang-switch">
+                    <button class="lang-btn active" data-lang="ru">RU</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="tabs-wrap">
+            <ul class="tabs">
+                <li><a href="#" class="tab active" data-page="dashboard">ДАШБОРД</a></li>
+                <li><a href="#" class="tab" data-page="menu">МЕНЮ И ТОВАРЫ</a></li>
+                <li><a href="#" class="tab" data-page="promotions">АКЦИИ</a></li>
+                <li><a href="#" class="tab" data-page="orders">ЗАКАЗЫ</a></li>
+                <li><a href="#" class="tab" data-page="kds">KDS</a></li>
+                <li><a href="#" class="tab" data-page="stock">СКЛАД</a></li>
+                <li><a href="#" class="tab" data-page="cashier-report">ОТЧЁТ КАССИРА</a></li>
+                <li><a href="#" class="tab" data-page="pos">КАССА/ККТ</a></li>
+                <li><a href="#" class="tab" data-page="edo">ЭДО</a></li>
+                <li><a href="#" class="tab" data-page="mercury">МЕРКУРИЙ</a></li>
+                <li><a href="#" class="tab" data-page="honest">ЧЕСТНЫЙ ЗНАК</a></li>
+                <li><a href="#" class="tab" data-page="egais">ЕГАИС</a></li>
+                <li><a href="#" class="tab" data-page="couriers">КУРЬЕРЫ</a></li>
+                <li><a href="#" class="tab" data-page="inventory">ИНВЕНТАРИЗАЦИЯ</a></li>
+                <li><a href="#" class="tab" data-page="pricing">ПЕРЕСЧЁТ ЦЕН</a></li>
+                <li><a href="#" class="tab" data-page="marketing">МАРКЕТИНГ</a></li>
+                <li><a href="#" class="tab" data-page="integrations">ИНТЕГРАЦИИ</a></li>
+                <li><a href="#" class="tab" data-page="reports">ОТЧЁТНОСТЬ</a></li>
+                <li><a href="#" class="tab" data-page="alerts">УВЕДОМЛЕНИЯ</a></li>
+                <li><a href="#" class="tab" data-page="profile">ПРОФИЛЬ</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="page-content active">
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3 class="card-title">Статус смены / Персонал</h3>
+                        <p>Открыта • Кассиры: 2 • Поваров: 3 • Курьеров: 4</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Основные метрики</h3>
+                        <p>₽ 128 540 выручка • 144 заказов • 18 крит. остатки</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Быстрые действия</h3>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-small" onclick="openShift()">Открыть смену</button>
+                            <button class="btn btn-primary btn-small" onclick="createOrder()">Создать заказ</button>
+                            <button class="btn btn-primary btn-small" onclick="openInventory()">Инвентаризация</button>
+                            <button class="btn btn-primary btn-small" id="openCashier" onclick="openPOS()">Войти в кассир</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Лента активности (live)</h3>
+                        <ul style="list-style: disc; margin-left: 1.5rem;">
+                            <li>Заказ #1029 принят (Яндекс Еда)</li>
+                            <li>Фискализация чека успешна</li>
+                            <li>Курьер Алексей передал заказ → едет обратно</li>
+                        </ul>
+                    </div>
+                    <div class="card alert alert-danger">
+                        <h3 class="card-title">Критические алерты</h3>
+                        <p>Остаток «Лосось» &lt; 1.0 кг • Срок оплаты накладной — завтра</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Платёжный календарь</h3>
+                        <p>Сегодня: аренда; завтра: ОФД; 25.09 — УСН</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <div id="menu" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Каталог</h3>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <button class="btn btn-primary btn-small" id="dishesTab">Блюда</button>
+                        <button class="btn btn-secondary btn-small" id="productsTab">Товары</button>
+                        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
+                            <input type="file" accept=".csv" id="csvImport">
+                            <button class="btn btn-secondary btn-small" id="loadSample">Загрузить тестовый CSV</button>
+                        </div>
+                    </div>
+                    <div id="menuTable"></div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" id="addItemTitle">Добавить блюдо</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-input" id="itemName" placeholder="Например: Филадельфия">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Категория</label>
+                            <input type="text" class="form-input" id="itemCategory" placeholder="Роллы / Пицца">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Цена, ₽</label>
+                            <input type="number" class="form-input" id="itemPrice" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Себестоимость, ₽</label>
+                            <input type="number" class="form-input" id="itemCost" value="0">
+                        </div>
+                        <div class="form-group" id="modifiersGroup">
+                            <label class="form-label">Модификаторы</label>
+                            <input type="text" class="form-input" id="itemModifiers" placeholder="соус, доп. сыр">
+                        </div>
+                        <div class="form-group" id="allergensGroup">
+                            <label class="form-label">Аллергены</label>
+                            <input type="text" class="form-input" id="itemAllergens" placeholder="рыба, молоко">
+                        </div>
+                        <div class="form-group" id="skuGroup" style="display: none;">
+                            <label class="form-label">SKU</label>
+                            <input type="text" class="form-input" id="itemSku" placeholder="SKU-000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-input" id="itemDescription" rows="3" placeholder="Описание"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Вес/Граммы/Размер</label>
+                            <input type="text" class="form-input" id="itemWeight" placeholder="Например: 500г, 30см, 350мл">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Изображение (URL)</label>
+                            <input type="text" class="form-input" id="itemPhoto" placeholder="https://example.com/photo.jpg">
+                            <div id="photoPreview" style="margin-top: 0.5rem;"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="addItem">Добавить</button>
+                </div>
+            </div>
+
+            <!-- Promotions -->
+            <div id="promotions" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Управление акциями</h3>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <button class="btn btn-primary btn-small" onclick="admin.createPromotion()">Создать акцию</button>
+                        <button class="btn btn-secondary btn-small" onclick="admin.exportPromotions()">Экспорт</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Активные акции</h3>
+                    <div id="promotionsTable"></div>
+                </div>
+            </div>
+
+            <!-- Orders -->
+            <div id="orders" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Фильтр статуса</h3>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary btn-small filter-btn active" data-filter="all">Все</button>
+                        <button class="btn btn-secondary btn-small filter-btn" data-filter="принят">Принят</button>
+                        <button class="btn btn-secondary btn-small filter-btn" data-filter="готовится">Готовится</button>
+                        <button class="btn btn-secondary btn-small filter-btn" data-filter="готов">Готов</button>
+                        <button class="btn btn-secondary btn-small filter-btn" data-filter="у курьера">У курьера</button>
+                        <button class="btn btn-secondary btn-small filter-btn" data-filter="доставлен">Доставлен</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Заказы</h3>
+                    <table class="table" id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Клиент</th>
+                                <th>Канал</th>
+                                <th>Курьер</th>
+                                <th>ETA</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Other pages will be added dynamically -->
+            <div id="kds" class="page-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="card-title">Пицца • Пепперони 30 см</h3>
+                        <p>SLA: 05:12 • Приоритет: высокий</p>
+                        <button class="btn btn-primary btn-small">Готово</button>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Суши • Филадельфия</h3>
+                        <p>SLA: 03:40 • Приоритет: средний</p>
+                        <button class="btn btn-primary btn-small">Готово</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="stock" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Остатки</h3>
+                    <p>Список ТМЦ, критические остатки выделены, FEFO и сроки годности.</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Накладные</h3>
+                    <p>Импорт PDF/JPG/XLS • OCR • сопоставление номенклатуры • партии.</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Инвентаризация</h3>
+                    <p>Пересчёт • протокол расхождений • двойное подтверждение.</p>
+                </div>
+            </div>
+
+            <!-- Cashier Report -->
+            <div id="cashier-report" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Отчёт кассира</h3>
+                    <div class="form-group">
+                        <label class="form-label">Выберите кассира</label>
+                        <select class="form-input" id="cashierSelect">
+                            <option value="all">Все кассиры</option>
+                            <option value="ivan">Иван Петров</option>
+                            <option value="maria">Мария Сидорова</option>
+                            <option value="alex">Алексей Козлов</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Период</label>
+                        <div class="form-row">
+                            <input type="date" class="form-input" id="reportStartDate" value="2024-01-01">
+                            <input type="date" class="form-input" id="reportEndDate" value="2024-01-31">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateCashierReport()">Сформировать отчёт</button>
+                </div>
+                
+                <div id="cashierReportResults" class="card" style="margin-top: 1rem; display: none;">
+                    <h3 class="card-title">Результаты отчёта</h3>
+                    <div id="cashierReportContent"></div>
+                </div>
+            </div>
+
+            <!-- POS -->
+            <div id="pos" class="page-content">
+                <div id="posContent">
+                    <div class="card">
+                        <h3 class="card-title">Касса/ККТ</h3>
+                        <p>Переход к системе кассы и контрольно-кассовой техники</p>
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" onclick="openPOS()" style="margin-right: 1rem;">
+                                🏪 Открыть кассу
+                            </button>
+                            <button class="btn btn-secondary" onclick="openPOSOrders()">
+                                📋 Управление заказами
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="card-title">Быстрые действия</h3>
+                        <div class="grid grid-3">
+                            <button class="btn btn-secondary" onclick="openPOS()">
+                                💰 Продажа
+                            </button>
+                            <button class="btn btn-secondary" onclick="openPOSOrders()">
+                                📦 Заказы
+                            </button>
+                            <button class="btn btn-secondary" onclick="openPOSReports()">
+                                📊 Отчёты
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDO -->
+            <div id="edo" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Накладные (ЭДО)</h3>
+                    <p>Фильтры по статусу/дате • входящие/исходящие УПД • подпись КЭП • статусы отправки • архив.</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Честный знак</h3>
+                    <p>Загрузка кодов DataMatrix • списание при продаже • агрегация/снятие с учёта.</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Меркурий</h3>
+                    <p>ВСД • погашение/списание партий • алерты просрочек • обратные операции.</p>
+                </div>
+            </div>
+
+            <!-- Mercury -->
+            <div id="mercury" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Меркурий (ВСД)</h3>
+                    <p>Подключение ВЕТИС.API • приём/погашение • журналы партий • списание по техкартам.</p>
+                </div>
+            </div>
+
+            <!-- Honest Sign -->
+            <div id="honest" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">Честный знак</h3>
+                    <p>Учёт маркировки • приём кодов • статусы • списание при реализации.</p>
+                </div>
+            </div>
+
+            <!-- EGAIS -->
+            <div id="egais" class="page-content">
+                <div class="card">
+                    <h3 class="card-title">ЕГАИС — режим</h3>
+                    <p>Магазин (бутылочное) / Ресторан (разлив)</p>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Формы и операции</h3>
+                    <div class="grid grid-3">
+                        <div class="card">
+                            <h4 class="card-title">Приём ТТН</h4>
+                            <div class="form-group">
+                                <label class="form-label">Номер ТТН</label>
+                                <input type="text" class="form-input" placeholder="000000000">
+                            </div>
+                            <button class="btn btn-primary btn-small">Принять</button>
+                        </div>
+                        <div class="card">
+                            <h4 class="card-title">Возврат поставщику</h4>
+                            <div class="form-group">
+                                <label class="form-label">Основание</label>
+                                <input type="text" class="form-input" placeholder="несоответствие">
+                            </div>
+                            <button class="btn btn-secondary btn-small">Создать возврат</button>
+                        </div>
+                        <div class="card">
+                            <h4 class="card-title">Списание</h4>
+                            <div class="form-group">
+                                <label class="form-label">Причина</label>
+                                <input type="text" class="form-input" placeholder="порча/пролив/технология">
+                            </div>
+                            <button class="btn btn-secondary btn-small">Списать</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">Журнал партий (GUID, сроки годности, причины списаний)</div>
+                </div>
+            </div>
+
+            <!-- Couriers -->
+            <div id="couriers" class="page-content">
+                <div id="couriersContent"></div>
+            </div>
+
+            <!-- Inventory -->
+            <div id="inventory" class="page-content">
+                <div id="inventoryContent"></div>
+            </div>
+
+            <!-- Pricing -->
+            <div id="pricing" class="page-content">
+                <div id="pricingContent"></div>
+            </div>
+
+            <!-- Marketing -->
+            <div id="marketing" class="page-content">
+                <div id="marketingContent"></div>
+            </div>
+
+            <!-- Integrations -->
+            <div id="integrations" class="page-content">
+                <div id="integrationsContent"></div>
+            </div>
+
+            <!-- Reports -->
+            <div id="reports" class="page-content">
+                <div id="reportsContent"></div>
+            </div>
+
+            <!-- Alerts -->
+            <div id="alerts" class="page-content">
+                <div id="alertsContent"></div>
+            </div>
+
+            <!-- Profile -->
+            <div id="profile" class="page-content">
+                <div id="profileContent"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- API Helper -->
+    <script src="js/api.js"></script>
+    <script src="admin.js"></script>
+    <script src="admin-modules.js"></script>
+    <script src="admin-improvements.js"></script>
+    <script src="admin-improvements-part2.js"></script>
+    <script src="admin-improvements-part3.js"></script>
+    
+    <!-- Новые модули -->
+    <script src="modules/kds-module.js"></script>
+    <script src="modules/inventory-module.js"></script>
+    <script src="modules/reports-module-short.js"></script>
+    <script src="modules/couriers-management-module.js"></script>
+    <script src="modules/integrations-config-module.js"></script>
+</body>
+</html>

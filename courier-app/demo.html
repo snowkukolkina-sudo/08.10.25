@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DANDY Courier App - Демо</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #0b5c3b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0b5c3b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .login-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .login-button {
+            background: #0b5c3b;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-button:hover {
+            background: #0a4d32;
+        }
+        
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .orders-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0b5c3b;
+        }
+        
+        .logout-button {
+            color: #ff4444;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .order-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .order-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0b5c3b;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pending { background: #ff9800; }
+        .status-confirmed { background: #2196f3; }
+        .status-preparing { background: #ffc107; }
+        .status-ready { background: #4caf50; }
+        .status-delivered { background: #9c27b0; }
+        
+        .customer-info {
+            margin-bottom: 8px;
+        }
+        
+        .customer-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .customer-phone {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .delivery-address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .order-total {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0b5c3b;
+            margin-bottom: 12px;
+        }
+        
+        .order-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .action-button {
+            background: #0b5c3b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .action-button:hover {
+            background: #0a4d32;
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🍕</div>
+            <div class="title">DANDY Courier</div>
+            <div class="subtitle">Приложение для курьеров</div>
+        </div>
+        
+        <div class="content">
+            <!-- Login Screen -->
+            <div id="login-screen" class="screen active">
+                <div class="login-form">
+                    <div class="login-title">Вход в систему</div>
+                    <div class="login-info">
+                        Демо пользователь: courier1 / 123<br>
+                        Роль: Курьер
+                    </div>
+                    <button class="login-button" onclick="login()">
+                        Войти как курьер
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Orders Screen -->
+            <div id="orders-screen" class="screen">
+                <div class="orders-header">
+                    <div class="orders-title">Заказы</div>
+                    <div class="logout-button" onclick="logout()">Выйти</div>
+                </div>
+                
+                <div class="success-message" id="success-message">
+                    Статус заказа обновлен!
+                </div>
+                
+                <div id="orders-list">
+                    <!-- Orders will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Тестовые данные
+        const orders = [
+            {
+                id: 1,
+                orderNumber: 'ORD-001',
+                customerName: 'Иван Петров',
+                customerPhone: '+7 (999) 123-45-67',
+                totalAmount: 850,
+                status: 'pending',
+                deliveryAddress: 'ул. Ленина, д. 10, кв. 5',
+                items: [
+                    { name: 'Пепперони', quantity: 1, price: 399 },
+                    { name: 'Кока-Кола', quantity: 2, price: 89 },
+                ]
+            },
+            {
+                id: 2,
+                orderNumber: 'ORD-002',
+                customerName: 'Мария Сидорова',
+                customerPhone: '+7 (999) 234-56-78',
+                totalAmount: 1200,
+                status: 'confirmed',
+                deliveryAddress: 'пр. Мира, д. 25, кв. 12',
+                items: [
+                    { name: 'Маргарита', quantity: 1, price: 349 },
+                    { name: 'Филадельфия', quantity: 1, price: 459 },
+                    { name: 'Калифорния', quantity: 1, price: 389 },
+                ]
+            },
+            {
+                id: 3,
+                orderNumber: 'ORD-003',
+                customerName: 'Алексей Иванов',
+                customerPhone: '+7 (999) 345-67-89',
+                totalAmount: 650,
+                status: 'ready',
+                deliveryAddress: 'ул. Пушкина, д. 5, кв. 8',
+                items: [
+                    { name: 'Калифорния', quantity: 1, price: 389 },
+                    { name: 'Кока-Кола', quantity: 1, price: 89 },
+                ]
+            }
+        ];
+
+        const statusLabels = {
+            pending: 'Новый',
+            confirmed: 'Принят',
+            preparing: 'Готовится',
+            ready: 'Готов',
+            delivered: 'Доставлен',
+            cancelled: 'Отменен'
+        };
+
+        function login() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('orders-screen').classList.add('active');
+            renderOrders();
+        }
+
+        function logout() {
+            document.getElementById('orders-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+        }
+
+        function renderOrders() {
+            const ordersList = document.getElementById('orders-list');
+            ordersList.innerHTML = '';
+
+            orders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-number">#${order.orderNumber}</div>
+                        <div class="status-badge status-${order.status}">${statusLabels[order.status]}</div>
+                    </div>
+                    <div class="customer-info">
+                        <div class="customer-name">👤 ${order.customerName}</div>
+                        <div class="customer-phone">📞 ${order.customerPhone}</div>
+                        <div class="delivery-address">📍 ${order.deliveryAddress}</div>
+                    </div>
+                    <div class="order-total">💰 ${order.totalAmount} ₽</div>
+                    <div class="order-actions">
+                        ${getActionButton(order)}
+                    </div>
+                `;
+                
+                ordersList.appendChild(orderCard);
+            });
+        }
+
+        function getActionButton(order) {
+            switch (order.status) {
+                case 'pending':
+                    return `<button class="action-button" onclick="updateOrderStatus(${order.id}, 'confirmed')">Принять</button>`;
+                case 'confirmed':
+                    return `<button class="action-button" onclick="updateOrderStatus(${order.id}, 'preparing')">Начать доставку</button>`;
+                case 'ready':
+                    return `<button class="action-button" onclick="updateOrderStatus(${order.id}, 'delivered')">Завершить</button>`;
+                default:
+                    return '';
+            }
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                renderOrders();
+                showSuccessMessage();
+            }
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('success-message');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        }
+
+        // Инициализация
+        console.log('🚚 DANDY Courier App - Веб демо запущено!');
+        console.log('📱 Функциональность:');
+        console.log('✅ Аутентификация курьера');
+        console.log('✅ Просмотр заказов');
+        console.log('✅ Обновление статусов');
+        console.log('✅ Современный интерфейс');
+    </script>
+</body>
+</html>

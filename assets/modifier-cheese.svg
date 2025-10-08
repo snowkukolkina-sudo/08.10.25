@@ -1,0 +1,28 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cheese-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA726;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#FFF9E6"/>
+  
+  <!-- Сырный круг -->
+  <circle cx="150" cy="150" r="100" fill="url(#cheese-grad)"/>
+  
+  <!-- Дырки в сыре -->
+  <ellipse cx="120" cy="130" rx="18" ry="22" fill="#FFE082" opacity="0.6"/>
+  <ellipse cx="170" cy="120" rx="15" ry="18" fill="#FFE082" opacity="0.6"/>
+  <ellipse cx="140" cy="170" rx="20" ry="24" fill="#FFE082" opacity="0.6"/>
+  <ellipse cx="180" cy="160" rx="16" ry="20" fill="#FFE082" opacity="0.6"/>
+  
+  <!-- Блик -->
+  <ellipse cx="130" cy="110" rx="30" ry="20" fill="#FFECB3" opacity="0.5"/>
+  
+  <!-- Текст -->
+  <text x="150" y="260" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#F57C00" text-anchor="middle">
+    🧀 СЫР
+  </text>
+</svg>

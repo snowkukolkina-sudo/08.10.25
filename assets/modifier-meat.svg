@@ -1,0 +1,36 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="meat-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A0522D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Фон -->
+  <rect width="300" height="300" fill="#FFF3E0"/>
+  
+  <!-- Мясо -->
+  <ellipse cx="150" cy="150" rx="90" ry="70" fill="url(#meat-grad)"/>
+  
+  <!-- Текстура мяса -->
+  <path d="M 100 130 Q 120 140, 140 135 T 180 140 T 200 130" stroke="#6D4C41" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M 110 160 Q 130 170, 150 165 T 190 170" stroke="#6D4C41" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M 105 145 Q 125 155, 145 150 T 185 155" stroke="#6D4C41" stroke-width="2" fill="none" opacity="0.4"/>
+  
+  <!-- Специи (точки) -->
+  <circle cx="130" cy="135" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="145" cy="145" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="160" cy="138" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="175" cy="148" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="125" cy="155" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="155" cy="160" r="2" fill="#000000" opacity="0.6"/>
+  <circle cx="170" cy="155" r="2" fill="#000000" opacity="0.6"/>
+  
+  <!-- Блик -->
+  <ellipse cx="135" cy="125" rx="25" ry="15" fill="#D2691E" opacity="0.4"/>
+  
+  <!-- Текст -->
+  <text x="150" y="260" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#8B4513" text-anchor="middle">
+    🥩 МЯСО
+  </text>
+</svg>
